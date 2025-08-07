@@ -25,7 +25,7 @@ end
 ---@param url string
 ---@return rest.curl.CommandBuilder
 function CommandBuilder:url(url)
-    table.insert(self._cmd, url)
+    table.insert(self._cmd, '"' .. url .. '"')
     return self
 end
 
