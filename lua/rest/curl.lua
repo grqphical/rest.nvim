@@ -36,4 +36,6 @@ function CommandBuilder:header(header)
     self._cmd = self._cmd .. string.format("-H \"%s\"", header)
 end
 
+M.CommandBuilder = CommandBuilder
+
 return M
