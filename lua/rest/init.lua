@@ -9,11 +9,12 @@ local defaults = {
 }
 
 ---@class rest.Request
----@field url string URL to send the request to
----@field method string HTTP method to use
----@field version string HTTP version to use
----@field header table<string, string> HTTP header
----@field body string The HTTP Request Body
+---@field url string: URL to send the request to
+---@field method string: HTTP method to use
+---@field version string: HTTP version to use
+---@field header table<string, string>: HTTP header
+---@field body string: The HTTP Request Body
+
 
 local function parse_line(line)
     local result = {
@@ -74,6 +75,11 @@ M.__parse_rest_buffer = function(contents)
     end
 
     return request
+end
+
+---@param request rest.Request
+local function send_request(request)
+
 end
 
 M.create_request = function()
