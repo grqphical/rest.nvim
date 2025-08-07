@@ -18,7 +18,7 @@ CommandBuilder.__index = CommandBuilder
 ---@return table
 function CommandBuilder:new()
     local self = setmetatable({}, CommandBuilder)
-    self._cmd = { "curl", "--verbose" }
+    self._cmd = { "curl" }
     return self
 end
 
@@ -32,21 +32,25 @@ end
 ---@param header string: key/pair value in form of key:pair
 ---@return rest.curl.CommandBuilder
 function CommandBuilder:header(header)
-    table.insert(self._cmd, string.format("-H \"%s\"", header))
+    table.insert(self._cmd, "-H")
+    table.insert(self._cmd, header)
     return self
 end
 
 ---@param method string
 ---@return rest.curl.CommandBuilder
 function CommandBuilder:method(method)
-    table.insert(self._cmd, string.format("-X %s", method))
+    table.insert(self._cmd, "-X")
+    table.insert(self._cmd, method)
     return self
 end
 
 ---@param body string
 ---@return rest.curl.CommandBuilder
 function CommandBuilder:body(body)
-    table.insert(self._cmd, string.format("-d '%s'", body))
+    table.insert(self._cmd, "-d")
+    table.insert(self._cmd, body)
+    return self
 end
 
 ---@param version string

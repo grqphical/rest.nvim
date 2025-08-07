@@ -89,7 +89,7 @@ local function show_response(system_completed)
         vim.api.nvim_buf_set_name(buf, "Response")
         vim.bo[buf].buftype = ""
 
-        local lines = vim.split(system_completed.stderr, "\n", { plain = true })
+        local lines = vim.split(system_completed.stdout, "\n", { plain = true })
         vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
         vim.api.nvim_set_option_value('modified', false, { buf = buf })
 
