@@ -81,11 +81,8 @@ end
 
 ---@param system_completed vim.SystemCompleted
 local function show_response(system_completed)
-    if system_completed.code ~= 0 then
-        error(string.format("curl exited with code: %d, %s", system_completed.code, system_completed.stderr))
-    end
-
     print(system_completed.stdout)
+    print(system_completed.stderr)
 end
 
 M.create_request = function()

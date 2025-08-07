@@ -18,14 +18,14 @@ CommandBuilder.__index = CommandBuilder
 ---@return table
 function CommandBuilder:new()
     local self = setmetatable({}, CommandBuilder)
-    self._cmd = { "curl" }
+    self._cmd = { "curl", "--verbose" }
     return self
 end
 
 ---@param url string
 ---@return rest.curl.CommandBuilder
 function CommandBuilder:url(url)
-    table.insert(self._cmd, " " .. url)
+    table.insert(self._cmd, url)
     return self
 end
 
@@ -38,6 +38,10 @@ end
 
 ---@param on_exit function: function to run when the command finishes
 function CommandBuilder:run(on_exit)
+    for _, arg in ipairs(self._cmd) do
+        print(arg)
+    end
+
     local _, err = pcall(function() vim.system(self._cmd, { text = true }, on_exit) end)
 
     if err then
