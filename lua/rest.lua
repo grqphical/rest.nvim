@@ -8,17 +8,6 @@ local defaults = {
 
 }
 
-local function split(s, delimiter)
-    delimiter = delimiter or '%s'
-    local t = {}
-    local i = 1
-    for str in string.gmatch(s, '([^' .. delimiter .. ']+)') do
-        t[i] = str
-        i = i + 1
-    end
-    return t
-end
-
 ---@class rest.Request
 ---@field url string URL to send the request to
 ---@field method string HTTP method to use
@@ -56,7 +45,7 @@ local function parse_line(line)
     return result
 end
 
----@param contents string
+---@param contents table<string>
 ---@return rest.Request
 M.__parse_rest_buffer = function(contents)
     local request = {
@@ -69,7 +58,7 @@ M.__parse_rest_buffer = function(contents)
         url = ""
     }
 
-    for line in split(contents, "\n") do
+    for line in contents do
         local result = parse_line(line)
         if result.key == "method" then
             request.method = result.value
@@ -85,6 +74,30 @@ M.__parse_rest_buffer = function(contents)
     end
 
     return request
+end
+
+M.create_new_request = function()
+    local buf = vim.api.nvim_create_buf(true, false)
+
+    vim.bo[buf].buftype = ""
+    vim.bo[buf].bufhidden = "wipe"
+    vim.bo[buf].swapfile = false
+    vim.bo[buf].modifiable = true
+    vim.bo[buf].filetype = "custombuffer"
+    vim.bo[buf].buflisted = true
+
+    vim.api.nvim_set_current_buf(buf)
+
+    vim.api.nvim_set_option_value('modified', false, { buf = buf })
+
+    vim.api.nvim_create_autocmd("BufWriteCmd", {
+        buffer = buf,
+        callback = function()
+            local request = M.__parse_rest_buffer(vim.api.nvim_buf_get_lines(buf, 0, -1, false))
+            print(request.url, request.method, request.body)
+            vim.api.nvim_set_option_value('modified', false, { buf = buf })
+        end,
+    })
 end
 
 M.setup = function(opts)
