@@ -76,7 +76,7 @@ M.__parse_rest_buffer = function(contents)
     return request
 end
 
-M.create_new_request = function()
+M.create_request = function()
     local buf = vim.api.nvim_create_buf(true, false)
 
     vim.bo[buf].buftype = ""
