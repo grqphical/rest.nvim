@@ -74,10 +74,6 @@ end
 
 ---@param on_exit function: function to run when the command finishes
 function CommandBuilder:run(on_exit)
-    for i, arg in ipairs(self._cmd) do
-        print(arg)
-    end
-
     local _, err = pcall(function() vim.system(self._cmd, { text = true }, on_exit):wait(5000) end)
 
     if err then

@@ -118,7 +118,6 @@ M.create_request = function()
             local cmd = curl.CommandBuilder:new():url(request.url)
 
             for _, value in ipairs(request.header) do
-                print(value)
                 cmd:header(value)
             end
 
