@@ -25,7 +25,8 @@ local function parse_line(line)
     }
 
     local parsingKey = true
-    for i, char in ipairs(line:gmatch ".") do
+    for i = 1, #line do
+        local char = line[i]
         if char == ":" then
             parsingKey = false
 
