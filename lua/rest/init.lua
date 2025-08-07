@@ -95,9 +95,7 @@ M.create_request = function()
             local request = M.__parse_rest_buffer(vim.api.nvim_buf_get_lines(buf, 0, -1, false))
             vim.api.nvim_set_option_value('modified', false, { buf = buf })
 
-            local cmd = curl.create_command_builder()
-
-            cmd.url(request.url)
+            local cmd = curl.CommandBuilder:new():url(request.url)
 
             print(cmd._cmd)
         end,
