@@ -87,6 +87,7 @@ local function show_response(system_completed)
     vim.schedule(function()
         local buf = vim.api.nvim_create_buf(true, false)
         vim.api.nvim_buf_set_name(buf, "Response")
+        vim.bo[buf].buftype = ""
 
         local lines = vim.split(system_completed.stdout, "\n", { plain = true })
         vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
@@ -121,6 +122,7 @@ M.create_request = function()
             end
 
             cmd:run(show_response)
+            vim.api.nvim_buf_delete(buf, { force = true })
         end,
     })
 end

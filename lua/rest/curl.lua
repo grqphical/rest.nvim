@@ -39,11 +39,7 @@ end
 
 ---@param on_exit function: function to run when the command finishes
 function CommandBuilder:run(on_exit)
-    for _, arg in ipairs(self._cmd) do
-        print(arg)
-    end
-
-    local _, err = pcall(function() vim.system(self._cmd, { text = true }, on_exit) end)
+    local _, err = pcall(function() vim.system(self._cmd, { text = true }, on_exit):wait(5000) end)
 
     if err then
         error(string.format("unable to run curl: %s", err))
