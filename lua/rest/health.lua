@@ -5,9 +5,9 @@ function M.check()
     health.start("rest.nvim health check")
 
     if vim.fn.executable("curl") == 1 then
-        health.report_ok("curl is available")
+        health.ok("curl is available")
     else
-        health.report_error("curl not found", { "curl is required for rest.nvim" })
+        health.error("curl not found", { "curl is required for rest.nvim" })
     end
 end
 
