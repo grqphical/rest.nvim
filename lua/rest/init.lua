@@ -27,7 +27,7 @@ local function parse_line(line)
     local parsingKey = true
     for i = 1, #line do
         local char = line:sub(i, i)
-        if char == ":" then
+        if char == ":" and parsingKey == true then
             parsingKey = false
 
             --- remove space after colon if it exists
