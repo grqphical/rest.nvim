@@ -1,3 +1,5 @@
+local curl = require("rest.curl")
+
 local M = {}
 
 local options = {
@@ -77,11 +79,6 @@ M.__parse_rest_buffer = function(contents)
     return request
 end
 
----@param request rest.Request
-local function send_request(request)
-
-end
-
 M.create_request = function()
     local buf = vim.api.nvim_create_buf(true, false)
     vim.bo[buf].buftype = ""
@@ -96,8 +93,13 @@ M.create_request = function()
         buffer = buf,
         callback = function()
             local request = M.__parse_rest_buffer(vim.api.nvim_buf_get_lines(buf, 0, -1, false))
-            print(request.url, request.method, request.body)
             vim.api.nvim_set_option_value('modified', false, { buf = buf })
+
+            local cmd = curl.create_command_builder()
+
+            cmd.url(request.url)
+
+            print(cmd._cmd)
         end,
     })
 end
