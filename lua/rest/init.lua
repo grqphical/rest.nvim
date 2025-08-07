@@ -1,4 +1,5 @@
 local curl = require("rest.curl")
+local highlights = require("rest.highlights")
 
 local M = {}
 
@@ -92,6 +93,7 @@ local function show_response(system_completed)
         local lines = vim.split(system_completed.stdout, "\n", { plain = true })
         vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
         vim.api.nvim_set_option_value('modified', false, { buf = buf })
+        vim.api.nvim_set_option_value('filetype', "rest.nvim-response", { buf = buf })
 
         vim.bo[buf].modifiable = false
         vim.api.nvim_set_current_buf(buf)
@@ -116,6 +118,7 @@ M.create_request = function()
     vim.api.nvim_set_current_buf(buf)
 
     vim.api.nvim_set_option_value('modified', false, { buf = buf })
+    vim.api.nvim_set_option_value('filetype', "rest.nvim-request", { buf = buf })
 
     vim.api.nvim_create_autocmd("BufWriteCmd", {
         buffer = buf,
@@ -139,52 +142,54 @@ M.create_request = function()
     })
 end
 
+local function saveData(o)
+    local current_buf = vim.api.nvim_get_current_buf()
+
+    if vim.api.nvim_buf_get_name(current_buf) == "rest.nvim" then
+        local path = opts.args
+        if path == "" then
+            path = "./request" -- change this to whatever default you want
+        end
+        local lines = vim.api.nvim_buf_get_lines(current_buf, 0, -1, false)
+
+        local file = io.open(path, "w")
+        if not file then
+            vim.notify("Could not open file: " .. path, vim.log.levels.ERROR)
+            return
+        end
+
+        for _, line in ipairs(lines) do
+            file:write(line .. "\n")
+        end
+        file:close()
+        print("Saved request data to:", path)
+    elseif vim.api.nvim_buf_get_name(current_buf) == "Response" then
+        local path = opts.args
+        if path == "" then
+            path = "./response" -- change this to whatever default you want
+        end
+        local lines = vim.api.nvim_buf_get_lines(current_buf, 0, -1, false)
+
+        local file = io.open(path, "w")
+        if not file then
+            vim.notify("Could not open file: " .. path, vim.log.levels.ERROR)
+            return
+        end
+
+        for _, line in ipairs(lines) do
+            file:write(line .. "\n")
+        end
+        file:close()
+        print("Saved response data to:", path)
+    else
+        print("not in request or response buffer")
+    end
+end
+
 M.setup = function(opts)
     options = vim.tbl_deep_extend("force", defaults, opts or {})
 
-    vim.api.nvim_create_user_command("SaveRequest", function(o)
-        local current_buf = vim.api.nvim_get_current_buf()
-
-        if vim.api.nvim_buf_get_name(current_buf) == "rest.nvim" then
-            local path = opts.args
-            if path == "" then
-                path = "./request" -- change this to whatever default you want
-            end
-            local lines = vim.api.nvim_buf_get_lines(current_buf, 0, -1, false)
-
-            local file = io.open(path, "w")
-            if not file then
-                vim.notify("Could not open file: " .. path, vim.log.levels.ERROR)
-                return
-            end
-
-            for _, line in ipairs(lines) do
-                file:write(line .. "\n")
-            end
-            file:close()
-            print("Saved request data to:", path)
-        elseif vim.api.nvim_buf_get_name(current_buf) == "Response" then
-            local path = opts.args
-            if path == "" then
-                path = "./response" -- change this to whatever default you want
-            end
-            local lines = vim.api.nvim_buf_get_lines(current_buf, 0, -1, false)
-
-            local file = io.open(path, "w")
-            if not file then
-                vim.notify("Could not open file: " .. path, vim.log.levels.ERROR)
-                return
-            end
-
-            for _, line in ipairs(lines) do
-                file:write(line .. "\n")
-            end
-            file:close()
-            print("Saved response data to:", path)
-        else
-            print("not in request or response buffer")
-        end
-    end, {
+    vim.api.nvim_create_user_command("SaveRequest", saveData, {
         nargs = "?",
         complete = "file",
     })
@@ -194,6 +199,16 @@ M.setup = function(opts)
 
         rest.create_request()
     end, {})
+
+    vim.api.nvim_create_autocmd("FileType", {
+        pattern = "rest.nvim-request",
+        callback = highlights.apply_request_highlights
+    })
+
+    vim.api.nvim_create_autocmd("FileType", {
+        pattern = "rest.nvim-response",
+        callback = highlights.apply_response_highlights
+    })
 end
 
 return M
