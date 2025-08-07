@@ -67,7 +67,7 @@ M.__parse_rest_buffer = function(contents)
         elseif result.key == "url" then
             request.url = result.value
         elseif result.key == "header" then
-            request.header[result.key] = result.value
+            table.insert(request.header, result.value)
         elseif result.key == "version" then
             request.version = result.value
         elseif result.key == "body" then
@@ -89,7 +89,7 @@ local function show_response(system_completed)
         vim.api.nvim_buf_set_name(buf, "Response")
         vim.bo[buf].buftype = ""
 
-        local lines = vim.split(system_completed.stdout, "\n", { plain = true })
+        local lines = vim.split(system_completed.stderr, "\n", { plain = true })
         vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
         vim.api.nvim_set_option_value('modified', false, { buf = buf })
 
@@ -117,9 +117,9 @@ M.create_request = function()
 
             local cmd = curl.CommandBuilder:new():url(request.url)
 
-            for key, value in pairs(request.header) do
-                print(key, value)
-                --cmd:header()
+            for _, value in ipairs(request.header) do
+                print(value)
+                cmd:header(value)
             end
 
             cmd:version(request.version)
