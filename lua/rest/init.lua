@@ -91,6 +91,7 @@ local function show_response(system_completed)
 
         local lines = vim.split(system_completed.stdout, "\n", { plain = true })
         vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+        vim.api.nvim_set_option_value('modified', false, { buf = buf })
 
         vim.bo[buf].modifiable = false
         vim.api.nvim_set_current_buf(buf)
@@ -100,6 +101,7 @@ end
 M.create_request = function()
     local buf = vim.api.nvim_create_buf(true, false)
     vim.bo[buf].buftype = ""
+
 
     vim.api.nvim_buf_set_name(buf, "rest.nvim")
 
@@ -113,9 +115,13 @@ M.create_request = function()
             local request = M.__parse_rest_buffer(vim.api.nvim_buf_get_lines(buf, 0, -1, false))
             vim.api.nvim_set_option_value('modified', false, { buf = buf })
 
-            vim.api.nvim_buf_delete(buf, { force = true })
+            local cmd = curl.CommandBuilder:new():url(request.url)
 
-            curl.CommandBuilder:new():url(request.url):run(show_response)
+            for key, value in pairs(request.header) do
+                cmd:header(key, value)
+            end
+
+            cmd:run(show_response)
         end,
     })
 end

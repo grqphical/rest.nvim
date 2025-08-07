@@ -29,10 +29,11 @@ function CommandBuilder:url(url)
     return self
 end
 
----@param header string: A header key/pair value in the form key:value
+---@param key string
+---@param value string
 ---@return rest.curl.CommandBuilder
-function CommandBuilder:header(header)
-    table.insert(self._cmd, string.format("-H \"%s\"", header))
+function CommandBuilder:header(key, value)
+    table.insert(self._cmd, string.format("-H \"%s: %s\"", key, value))
     return self
 end
 
