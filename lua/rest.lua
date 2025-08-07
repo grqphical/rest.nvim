@@ -78,13 +78,9 @@ end
 
 M.create_request = function()
     local buf = vim.api.nvim_create_buf(true, false)
+    vim.bo[buf].buftype = ""
 
-    vim.bo[buf].buftype = "acwrite"
-    vim.bo[buf].bufhidden = "wipe"
-    vim.bo[buf].swapfile = false
-    vim.bo[buf].modifiable = true
-    vim.bo[buf].filetype = "custombuffer"
-    vim.bo[buf].buflisted = true
+    vim.api.nvim_buf_set_name(buf, "New Request")
 
     vim.api.nvim_set_current_buf(buf)
 
