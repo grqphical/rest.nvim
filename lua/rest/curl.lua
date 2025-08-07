@@ -37,6 +37,38 @@ function CommandBuilder:header(key, value)
     return self
 end
 
+---@param method string
+---@return rest.curl.CommandBuilder
+function CommandBuilder:method(method)
+    table.insert(self._cmd, string.format("-X %s", method))
+    return self
+end
+
+---@param body string
+---@return rest.curl.CommandBuilder
+function CommandBuilder:body(body)
+    table.insert(self._cmd, string.format("-d '%s'", body))
+end
+
+---@param version string
+---@return rest.curl.CommandBuilder
+function CommandBuilder:version(version)
+    local version_flag = ""
+    if version == "HTTP/1.0" then
+        version_flag = "--http1.0"
+    elseif version == "HTTP/1.1" then
+        version_flag = "--http1.1"
+    elseif version == "HTTP/2" then
+        version_flag = "--http2"
+    elseif version == "HTTP/3" then
+        version_flag = "--http3"
+    else
+        error("invalid HTTP version provided")
+    end
+
+    table.insert(self._cmd, version_flag)
+end
+
 ---@param on_exit function: function to run when the command finishes
 function CommandBuilder:run(on_exit)
     local _, err = pcall(function() vim.system(self._cmd, { text = true }, on_exit):wait(5000) end)

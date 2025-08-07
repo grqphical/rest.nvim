@@ -121,6 +121,10 @@ M.create_request = function()
                 cmd:header(key, value)
             end
 
+            cmd:version(request.version)
+            cmd:body(request.body)
+            cmd:method(request.method)
+
             cmd:run(show_response)
             vim.api.nvim_buf_delete(buf, { force = true })
         end,
