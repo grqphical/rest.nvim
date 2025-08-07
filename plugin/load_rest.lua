@@ -3,3 +3,5 @@ vim.api.nvim_create_user_command("NewRequest", function()
 
     rest.create_request()
 end, {})
+
+print("Loaded plugin")
