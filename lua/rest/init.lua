@@ -79,11 +79,20 @@ M.__parse_rest_buffer = function(contents)
     return request
 end
 
+---@param system_completed vim.SystemCompleted
+local function show_response(system_completed)
+    if system_completed.code ~= 0 then
+        error(string.format("curl exited with code: %d, %s", system_completed.code, system_completed.stderr))
+    end
+
+    print(system_completed.stdout)
+end
+
 M.create_request = function()
     local buf = vim.api.nvim_create_buf(true, false)
     vim.bo[buf].buftype = ""
 
-    vim.api.nvim_buf_set_name(buf, "New Request")
+    vim.api.nvim_buf_set_name(buf, "rest.nvim")
 
     vim.api.nvim_set_current_buf(buf)
 
@@ -95,9 +104,7 @@ M.create_request = function()
             local request = M.__parse_rest_buffer(vim.api.nvim_buf_get_lines(buf, 0, -1, false))
             vim.api.nvim_set_option_value('modified', false, { buf = buf })
 
-            local cmd = curl.CommandBuilder:new():url(request.url)
-
-            print(cmd._cmd)
+            curl.CommandBuilder:new():url(request.url):run(show_response)
         end,
     })
 end

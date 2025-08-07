@@ -11,29 +11,38 @@ end
 local M = {}
 
 ---@class rest.curl.CommandBuilder
----@field _cmd string
-
-
+---@field _cmd string[]
 local CommandBuilder = {}
 CommandBuilder.__index = CommandBuilder
 
 ---@return table
 function CommandBuilder:new()
     local self = setmetatable({}, CommandBuilder)
-    self._cmd = "curl"
+    self._cmd = { "curl" }
     return self
 end
 
 ---@param url string
 ---@return rest.curl.CommandBuilder
 function CommandBuilder:url(url)
-    self._cmd = self._cmd .. " " .. url
+    table.insert(self._cmd, " " .. url)
     return self
 end
 
 ---@param header string: A header key/pair value in the form key:value
+---@return rest.curl.CommandBuilder
 function CommandBuilder:header(header)
-    self._cmd = self._cmd .. string.format("-H \"%s\"", header)
+    table.insert(self._cmd, string.format("-H \"%s\"", header))
+    return self
+end
+
+---@param on_exit function: function to run when the command finishes
+function CommandBuilder:run(on_exit)
+    local _, err = pcall(function() vim.system(self._cmd, { text = true }, on_exit) end)
+
+    if err then
+        error(string.format("unable to run curl: %s", err))
+    end
 end
 
 M.CommandBuilder = CommandBuilder
