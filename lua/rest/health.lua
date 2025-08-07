@@ -1,5 +1,4 @@
 local health = vim.health or require("vim.health") -- fallback for older versions
-print("loading healthcheck")
 local M = {}
 
 function M.check()
