@@ -63,6 +63,4 @@ M.setup = function(config)
     parse_rest_buffer("url: https://example.com\nheader: Content-Type: application/json\nbody: {\"foo\":\"bar\"}")
 end
 
-M.setup()
-
 return M
