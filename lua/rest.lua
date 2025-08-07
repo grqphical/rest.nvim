@@ -26,12 +26,12 @@ local function parse_line(line)
 
     local parsingKey = true
     for i = 1, #line do
-        local char = line[i]
+        local char = line:sub(i, i)
         if char == ":" then
             parsingKey = false
 
             -- remove space after colon if it exists
-            if #line >= i + 1 and line[i + 1] == " " then
+            if #line >= i + 1 and line:sub(i + 1, i + 1) == " " then
                 line = line:sub(1, i - 1) .. line:sub(i + 1)
             end
             goto continue
@@ -53,7 +53,7 @@ end
 local function parse_rest_buffer(contents)
     for i, line in ipairs(split(contents, "\n")) do
         local result = parse_line(line)
-        print(result)
+        print(result.key, result.value)
     end
 end
 
@@ -62,5 +62,7 @@ M.setup = function(config)
 
     parse_rest_buffer("url: https://example.com\nheader: Content-Type: application/json\nbody: {\"foo\":\"bar\"}")
 end
+
+M.setup()
 
 return M
