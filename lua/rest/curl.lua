@@ -18,7 +18,7 @@ CommandBuilder.__index = CommandBuilder
 ---@return table
 function CommandBuilder:new()
     local self = setmetatable({}, CommandBuilder)
-    self._cmd = { "curl" }
+    self._cmd = { "curl", "-i" }
     return self
 end
 
