@@ -54,7 +54,6 @@ M.__parse_rest_buffer = function(contents)
     local request = {
         method = "GET",
         header = {
-            ["User-Agent"] = "rest.nvim/0.1.0 curl/7.54.1"
         },
         version = "HTTP/1.1",
         body = "",
