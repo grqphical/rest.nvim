@@ -1,5 +1,13 @@
 local M = {}
 
+local options = {
+
+}
+
+local defaults = {
+
+}
+
 local function split(s, delimiter)
     delimiter = delimiter or '%s'
     local t = {}
@@ -79,8 +87,8 @@ M.__parse_rest_buffer = function(contents)
     return request
 end
 
-M.setup = function(config)
-    print("Loaded rest.nvim")
+M.setup = function(opts)
+    options = vim.tbl_deep_extend("force", defaults, opts or {})
 end
 
 return M
