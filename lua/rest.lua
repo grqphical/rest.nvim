@@ -58,7 +58,7 @@ M.__parse_rest_buffer = function(contents)
         url = ""
     }
 
-    for line in contents do
+    for _, line in ipairs(contents) do
         local result = parse_line(line)
         if result.key == "method" then
             request.method = result.value
