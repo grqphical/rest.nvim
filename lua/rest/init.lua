@@ -99,6 +99,14 @@ local function show_response(system_completed)
 end
 
 M.create_request = function()
+    local current_buf = vim.api.nvim_get_current_buf()
+
+    if vim.api.nvim_buf_get_name(current_buf) == "Response" then
+        vim.api.nvim_buf_delete(current_buf, { force = true })
+    elseif vim.api.nvim_buf_get_name(current_buf) == "rest.nvim" then
+        vim.api.nvim_buf_delete(current_buf, { force = true })
+    end
+
     local buf = vim.api.nvim_create_buf(true, false)
     vim.bo[buf].buftype = ""
 
