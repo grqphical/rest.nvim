@@ -29,11 +29,10 @@ function CommandBuilder:url(url)
     return self
 end
 
----@param key string
----@param value string
+---@param header string: key/pair value in form of key:pair
 ---@return rest.curl.CommandBuilder
-function CommandBuilder:header(key, value)
-    table.insert(self._cmd, string.format("-H \"%s: %s\"", key, value))
+function CommandBuilder:header(header)
+    table.insert(self._cmd, string.format("-H \"%s\"", header))
     return self
 end
 
@@ -71,6 +70,10 @@ end
 
 ---@param on_exit function: function to run when the command finishes
 function CommandBuilder:run(on_exit)
+    for i, arg in ipairs(self._cmd) do
+        print(arg)
+    end
+
     local _, err = pcall(function() vim.system(self._cmd, { text = true }, on_exit):wait(5000) end)
 
     if err then
