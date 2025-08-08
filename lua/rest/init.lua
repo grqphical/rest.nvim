@@ -1,5 +1,4 @@
 local curl = require("rest.curl")
-local highlights = require("rest.highlights")
 
 local M = {}
 
@@ -103,9 +102,9 @@ end
 M.create_request = function()
     local current_buf = vim.api.nvim_get_current_buf()
 
-    if vim.api.nvim_buf_get_name(current_buf) == "Response" then
+    if vim.bo[current_buf].filetype == "Response" then
         vim.api.nvim_buf_delete(current_buf, { force = true })
-    elseif vim.api.nvim_buf_get_name(current_buf) == "rest.nvim" then
+    elseif vim.bo[current_buf].filetype == "rest.nvim" then
         vim.api.nvim_buf_delete(current_buf, { force = true })
     end
 
@@ -144,11 +143,12 @@ end
 
 local function saveData(o)
     local current_buf = vim.api.nvim_get_current_buf()
+    print(vim.bo[current_buf].filetype)
 
-    if vim.api.nvim_buf_get_name(current_buf) == "rest.nvim" then
-        local path = opts.args
+    if vim.bo[current_buf].filetype == "rest.nvim-request" then
+        local path = o.args
         if path == "" then
-            path = "./request" -- change this to whatever default you want
+            path = "./request"
         end
         local lines = vim.api.nvim_buf_get_lines(current_buf, 0, -1, false)
 
@@ -163,10 +163,10 @@ local function saveData(o)
         end
         file:close()
         print("Saved request data to:", path)
-    elseif vim.api.nvim_buf_get_name(current_buf) == "Response" then
-        local path = opts.args
+    elseif vim.bo[current_buf].filetype == "rest.nvim-response" then
+        local path = o.args
         if path == "" then
-            path = "./response" -- change this to whatever default you want
+            path = "./response"
         end
         local lines = vim.api.nvim_buf_get_lines(current_buf, 0, -1, false)
 
@@ -199,16 +199,6 @@ M.setup = function(opts)
 
         rest.create_request()
     end, {})
-
-    vim.api.nvim_create_autocmd("FileType", {
-        pattern = "rest.nvim-request",
-        callback = highlights.apply_request_highlights
-    })
-
-    vim.api.nvim_create_autocmd("FileType", {
-        pattern = "rest.nvim-response",
-        callback = highlights.apply_response_highlights
-    })
 end
 
 return M
