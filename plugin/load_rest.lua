@@ -9,6 +9,10 @@ vim.api.nvim_create_user_command("NewRequest", function()
     rest.create_request()
 end, {})
 
+vim.api.nvim_create_user_command("SendRequest", function()
+    rest.sendRequestFromCurrentBuffer()
+end, {})
+
 -- enable highlights for request/response buffers
 vim.api.nvim_create_autocmd("FileType", {
     pattern = "rest.nvim-request",

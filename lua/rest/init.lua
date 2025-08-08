@@ -60,7 +60,7 @@ end
 M.__parse_rest_buffer = function(contents)
     local request = {
         method = options.default_method,
-        header = options.default_header,
+        header = options.default_headers,
         version = options.default_http_version,
         body = options.default_body,
         url = ""
@@ -116,22 +116,6 @@ local function show_response(system_completed)
     end)
 end
 
-local function delete_buffers_by_filetype(filetype, force)
-    local bufs = vim.api.nvim_list_bufs()
-    for _, bufnr in ipairs(bufs) do
-        if vim.api.nvim_buf_is_loaded(bufnr) then
-            local ft = vim.api.nvim_get_option_value("filetype", { buf = bufnr })
-            if ft == filetype then
-                if force then
-                    vim.cmd("bdelete! " .. bufnr)
-                else
-                    vim.cmd("bdelete " .. bufnr)
-                end
-            end
-        end
-    end
-end
-
 M.create_request = function()
     local current_buf = vim.api.nvim_get_current_buf()
 
@@ -172,6 +156,23 @@ M.create_request = function()
             vim.api.nvim_buf_delete(buf, { force = true })
         end,
     })
+end
+
+M.sendRequestFromCurrentBuffer = function()
+    local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+    local request = M.__parse_rest_buffer(lines)
+
+    local cmd = curl.CommandBuilder:new():url(request.url)
+
+    for _, value in ipairs(request.header) do
+        cmd:header(value)
+    end
+
+    cmd:version(request.version)
+    cmd:body(request.body)
+    cmd:method(request.method)
+
+    cmd:run(show_response)
 end
 
 M.saveData = function(o)
