@@ -21,12 +21,18 @@ local defaults = {
 local function parse_line(line)
     local result = {
         key = "",
-        value = ""
+        value = "",
+        comment = false
     }
 
     local parsingKey = true
     for i = 1, #line do
         local char = line:sub(i, i)
+        if i == 1 and char == "#" then
+            result.comment = true
+            return result
+        end
+
         if char == ":" and parsingKey == true then
             parsingKey = false
 
@@ -62,6 +68,10 @@ M.__parse_rest_buffer = function(contents)
 
     for _, line in ipairs(contents) do
         local result = parse_line(line)
+        if result.comment then
+            goto continue
+        end
+
         if result.key == "method" then
             request.method = result.value
         elseif result.key == "url" then
@@ -73,6 +83,7 @@ M.__parse_rest_buffer = function(contents)
         elseif result.key == "body" then
             request.body = result.value
         end
+        ::continue::
     end
 
     return request
