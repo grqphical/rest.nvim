@@ -110,7 +110,25 @@ local function show_response(system_completed)
     end)
 end
 
+local function delete_buffers_by_filetype(filetype, force)
+    local bufs = vim.api.nvim_list_bufs()
+    for _, bufnr in ipairs(bufs) do
+        if vim.api.nvim_buf_is_loaded(bufnr) then
+            local ft = vim.api.nvim_get_option_value("filetype", { buf = bufnr })
+            if ft == filetype then
+                if force then
+                    vim.cmd("bdelete! " .. bufnr)
+                else
+                    vim.cmd("bdelete " .. bufnr)
+                end
+            end
+        end
+    end
+end
+
 M.create_request = function()
+    delete_buffers_by_filetype("rest-nvim.response", true)
+
     local current_buf = vim.api.nvim_get_current_buf()
 
     if vim.bo[current_buf].filetype == "Response" then
