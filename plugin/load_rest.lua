@@ -38,3 +38,17 @@ vim.api.nvim_create_autocmd("FileType", {
         ]]
     end
 })
+
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "rest.nvim-response",
+    callback = function()
+        vim.cmd [[
+            syn match restStatusOk /\%1l2[0-9][0-9]/
+            syn match restStatusError /\%1l4[0-9][0-9]/
+            syn match restStatusError /\%1l5[0-9][0-9]/
+
+            hi def link restStatusOk DiagnosticOK
+            hi def link restStatusError Error
+        ]]
+    end
+})
