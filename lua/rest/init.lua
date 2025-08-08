@@ -152,7 +152,7 @@ M.create_request = function()
     })
 end
 
-local function saveData(o)
+M.saveData = function(o)
     local current_buf = vim.api.nvim_get_current_buf()
     print(vim.bo[current_buf].filetype)
 
@@ -199,17 +199,6 @@ end
 
 M.setup = function(opts)
     options = vim.tbl_deep_extend("force", defaults, opts or {})
-
-    vim.api.nvim_create_user_command("RestSave", saveData, {
-        nargs = "?",
-        complete = "file",
-    })
-
-    vim.api.nvim_create_user_command("NewRequest", function()
-        local rest = require("rest")
-
-        rest.create_request()
-    end, {})
 end
 
 return M
