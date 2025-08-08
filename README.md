@@ -39,3 +39,17 @@ To send the request, simply write the buffer with `:w` and the HTTP response wil
 
 If you have a request or a response you wish to save to a file simply run `:RestSave`, optionally add a file path and rest
 will save the contents of the current request/response to a file
+
+## Configuration
+
+If you wish to configure `rest.nvim` use the code below:
+```lua
+require("rest").setup {
+    default_method = "GET",
+    default_body = "",
+    default_http_version = "HTTP/1.1"
+    default_header = {}
+}
+
+```
+These are the default options that `rest.nvim` comes with

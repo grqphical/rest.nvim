@@ -2,12 +2,13 @@ local curl = require("rest.curl")
 
 local M = {}
 
-local options = {
-
-}
+local options = {}
 
 local defaults = {
-
+    default_http_version = "HTTP/1.1",
+    default_method = "GET",
+    default_headers = {},
+    default_body = "",
 }
 
 ---@class rest.Request
@@ -58,11 +59,10 @@ end
 ---@return rest.Request
 M.__parse_rest_buffer = function(contents)
     local request = {
-        method = "GET",
-        header = {
-        },
-        version = "HTTP/1.1",
-        body = "",
+        method = options.default_method,
+        header = options.default_header,
+        version = options.default_http_version,
+        body = options.default_body,
         url = ""
     }
 
@@ -133,8 +133,6 @@ local function delete_buffers_by_filetype(filetype, force)
 end
 
 M.create_request = function()
-    delete_buffers_by_filetype("rest-nvim.response", true)
-
     local current_buf = vim.api.nvim_get_current_buf()
 
     if vim.bo[current_buf].filetype == "Response" then
