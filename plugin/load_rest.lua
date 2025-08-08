@@ -14,7 +14,7 @@ vim.api.nvim_create_autocmd("FileType", {
     pattern = "rest.nvim-request",
     callback = function()
         vim.cmd [[
-            syn match restTag /^\s*\zs[^:]\+/
+            syn match restTag /^\s*\zs\%(\l\|\u\)\+\ze:/
 
             syn keyword restMethod GET
             syn keyword restMethod POST
@@ -32,7 +32,7 @@ vim.api.nvim_create_autocmd("FileType", {
             syn match restVersion /HTTP\/2/
             syn match restVersion /HTTP\/3/
 
-            hi def link restTag Statement
+            hi def link restTag Label
             hi def link restMethod Constant
             hi def link restVersion Constant
         ]]
@@ -43,12 +43,15 @@ vim.api.nvim_create_autocmd("FileType", {
     pattern = "rest.nvim-response",
     callback = function()
         vim.cmd [[
+            syn match restTag /^\s*\zs\%(\l\|\u\|-\)\+\ze:/
+
             syn match restStatusOk /\%1l2[0-9][0-9]/
             syn match restStatusError /\%1l4[0-9][0-9]/
             syn match restStatusError /\%1l5[0-9][0-9]/
 
             hi def link restStatusOk DiagnosticOK
             hi def link restStatusError Error
+            hi def link restTag Label
         ]]
     end
 })
