@@ -35,6 +35,13 @@ You can read more about the `rest.nvim` request language on the wiki
 
 To send the request, simply write the buffer with `:w` and the HTTP response will appear in a new buffer
 
+### Sending files
+
+Since `rest.nvim` is a frontend for curl, you can send entire files in the body of a request with:
+```
+body: @file.txt
+```
+
 ### Saving requests or responses
 
 If you have a request or a response you wish to save to a file simply run `:RestSave`, optionally add a file path and rest
@@ -53,3 +60,18 @@ require("rest").setup {
 
 ```
 These are the default options that `rest.nvim` comes with
+
+## Roadmap
+
+This is a plugin I built to serve my own needs but if you feel that you can write an improvement to my code feel
+free to make a PR
+
+These are some of the features I want to implement
+
+- [ ] Shorthand tags for markup langage (u instead of url)
+
+- [ ] Request template in config
+
+## License
+
+`rest.nvim` is licensed under the MIT License
