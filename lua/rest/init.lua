@@ -82,6 +82,8 @@ M.__parse_rest_buffer = function(contents)
             request.version = result.value
         elseif result.key == "body" then
             request.body = result.value
+        else
+            vim.notify(string.format("unknown key: '%s'", result.key), vim.log.levels.ERROR, {})
         end
         ::continue::
     end
@@ -92,7 +94,7 @@ end
 ---@param system_completed vim.SystemCompleted
 local function show_response(system_completed)
     if system_completed.code ~= 0 then
-        error(string.format("curl failed to run: %s", system_completed.stderr))
+        vim.notify(string.format("failed to send request: %s", system_completed.stdout), vim.log.levels.ERROR, {})
     end
 
     vim.schedule(function()
@@ -177,7 +179,6 @@ end
 
 M.saveData = function(o)
     local current_buf = vim.api.nvim_get_current_buf()
-    print(vim.bo[current_buf].filetype)
 
     if vim.bo[current_buf].filetype == "rest.nvim-request" then
         local path = o.args
