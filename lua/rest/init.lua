@@ -96,9 +96,15 @@ local function show_response(system_completed)
     end
 
     vim.schedule(function()
-        local buf = vim.api.nvim_create_buf(true, false)
-        vim.api.nvim_buf_set_name(buf, "Response")
+        local buf = vim.fn.bufnr("Response")
+
+        if buf == -1 then
+            buf = vim.api.nvim_create_buf(true, false)
+            vim.api.nvim_buf_set_name(buf, "Response")
+        end
+
         vim.bo[buf].buftype = ""
+        vim.bo[buf].modifiable = true
 
         local lines = vim.split(system_completed.stdout, "\n", { plain = true })
         vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
