@@ -25,11 +25,12 @@ rest.setup({opts})                                    *rest.setup()*
         >}
     
     Configuration options:
-        - default_headers (array): Headers to include in all requests. Format
-          should be "key:value"
-        - default_method (string): HTTP method to use by default in all requests. Defaults to GET.
-        - default_version (string): HTTP method to use by default in all requests. Defaults to HTTP/1.1.
-        - default_body (string): Default body contents for all requests.
+        - default (table):
+            - headers (array): Headers to include in all requests. Format should be "key:value"
+            - method (string): HTTP method to use by default in all requests. Defaults to GET.
+            - version (string): HTTP method to use by default in all requests. Defaults to HTTP/1.1.
+            - body (string): Default body contents for all requests.
+
         - request_template (string): Any string set here will be set as the
           contents for the request buffer when it's created
 

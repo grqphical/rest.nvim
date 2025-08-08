@@ -26,10 +26,12 @@ local M = {}
 local options = {}
 
 local defaults = {
-    default_http_version = "HTTP/1.1",
-    default_method = "GET",
-    default_headers = {},
-    default_body = "",
+    default = {
+        http_version = "HTTP/1.1",
+        method = "GET",
+        headers = {},
+        body = "",
+    },
 
     request_template = "#url:"
 }
@@ -82,10 +84,10 @@ end
 ---@return rest.Request
 M.__parse_rest_buffer = function(contents)
     local request = {
-        method = options.default_method,
-        header = options.default_headers,
-        version = options.default_http_version,
-        body = options.default_body,
+        method = options.default.method,
+        header = options.default.headers,
+        version = options.default.http_version,
+        body = options.default.body,
         url = ""
     }
 
