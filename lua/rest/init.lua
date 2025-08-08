@@ -189,7 +189,7 @@ end
 M.setup = function(opts)
     options = vim.tbl_deep_extend("force", defaults, opts or {})
 
-    vim.api.nvim_create_user_command("SaveRequest", saveData, {
+    vim.api.nvim_create_user_command("RestSave", saveData, {
         nargs = "?",
         complete = "file",
     })
