@@ -49,28 +49,15 @@ will save the contents of the current request/response to a file
 
 ## Configuration
 
-If you wish to configure `rest.nvim` use the code below:
+If you wish to configure `rest.nvim` use the code below in your `init.lua`:
 ```lua
 require("rest").setup {
-    default_method = "GET",
-    default_body = "",
-    default_http_version = "HTTP/1.1"
-    default_header = {}
+    -- configuration here
 }
 
 ```
-These are the default options that `rest.nvim` comes with
 
-## Roadmap
-
-This is a plugin I built to serve my own needs but if you feel that you can write an improvement to my code feel
-free to make a PR
-
-These are some of the features I want to implement
-
-- [ ] Shorthand tags for markup langage (u instead of url)
-
-- [ ] Request template in config
+You can read more about configuring `rest.nvim` on the wiki
 
 ## License
 

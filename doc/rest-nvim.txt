@@ -21,12 +21,17 @@ rest.setup({opts})                                    *rest.setup()*
     Usage:
         >lua
         >require("rest").setup{
-        >   default_method = "GET",
-        >   default_headers = {
-        >       "Content-Type: application/json"
-        >   },
-        >   default_version = "HTTP/1.1"
+        >   -- configuration here
         >}
+    
+    Configuration options:
+        - default_headers (array): Headers to include in all requests. Format
+          should be "key:value"
+        - default_method (string): HTTP method to use by default in all requests. Defaults to GET.
+        - default_version (string): HTTP method to use by default in all requests. Defaults to HTTP/1.1.
+        - default_body (string): Default body contents for all requests.
+        - request_template (string): Any string set here will be set as the
+          contents for the request buffer when it's created
 
 AUTHOR
     Nathan Jacobson https://github.com/grqphical

@@ -1,5 +1,26 @@
 local curl = require("rest.curl")
 
+---Splits a string based on a given delimiter character
+---@param s string: String to split
+---@param delimiter string: Character to split at
+---@return table<string>
+local function split(s, delimiter)
+    if s == nil then
+        return {}
+    end
+
+    local result               = {}
+    local from                 = 1
+    local delim_from, delim_to = string.find(s, delimiter, from)
+    while delim_from do
+        table.insert(result, string.sub(s, from, delim_from - 1))
+        from                 = delim_to + 1
+        delim_from, delim_to = string.find(s, delimiter, from)
+    end
+    table.insert(result, string.sub(s, from))
+    return result
+end
+
 local M = {}
 
 local options = {}
@@ -9,6 +30,8 @@ local defaults = {
     default_method = "GET",
     default_headers = {},
     default_body = "",
+
+    request_template = "#url:"
 }
 
 ---@class rest.Request
@@ -93,11 +116,11 @@ end
 
 ---@param system_completed vim.SystemCompleted
 local function show_response(system_completed)
-    if system_completed.code ~= 0 then
-        vim.notify(string.format("failed to send request: %s", system_completed.stdout), vim.log.levels.ERROR, {})
-    end
-
     vim.schedule(function()
+        if system_completed.code ~= 0 then
+            vim.notify(string.format("failed to send request: %s", system_completed.stderr), vim.log.levels.ERROR, {})
+        end
+
         local buf = vim.fn.bufnr("Response")
 
         if buf == -1 then
@@ -133,6 +156,9 @@ M.create_request = function()
 
     vim.api.nvim_buf_set_name(buf, "rest.nvim")
 
+    local lines = split(options.request_template, "\n")
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+
     vim.api.nvim_set_current_buf(buf)
 
     vim.api.nvim_set_option_value('modified', false, { buf = buf })
@@ -143,6 +169,11 @@ M.create_request = function()
         callback = function()
             local request = M.__parse_rest_buffer(vim.api.nvim_buf_get_lines(buf, 0, -1, false))
             vim.api.nvim_set_option_value('modified', false, { buf = buf })
+
+            if request.url == "" then
+                vim.api.nvim_buf_delete(buf, { force = true })
+                return
+            end
 
             local cmd = curl.CommandBuilder:new():url(request.url)
 
