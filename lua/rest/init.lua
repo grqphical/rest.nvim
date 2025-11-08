@@ -31,6 +31,7 @@ local defaults = {
         method = "GET",
         headers = {},
         body = "",
+        cookies = {},
     },
 
     request_template = "#url:"
@@ -42,6 +43,7 @@ local defaults = {
 ---@field version string: HTTP version to use
 ---@field header table<string, string>: HTTP header
 ---@field body string: The HTTP Request Body
+---@field cookies table<string> Cookies to send with request
 
 
 local function parse_line(line)
@@ -88,7 +90,8 @@ M.__parse_rest_buffer = function(contents)
         header = options.default.headers,
         version = options.default.http_version,
         body = options.default.body,
-        url = ""
+        url = "",
+        cookies = {},
     }
 
     for _, line in ipairs(contents) do
@@ -107,6 +110,8 @@ M.__parse_rest_buffer = function(contents)
             request.version = result.value
         elseif result.key == "body" then
             request.body = result.value
+        elseif result.key == "cookie" then
+            table.insert(request.cookies, result.value)
         else
             vim.notify(string.format("unknown key: '%s'", result.key), vim.log.levels.ERROR, {})
         end
@@ -183,6 +188,10 @@ M.create_request = function()
                 cmd:header(value)
             end
 
+            for _, value in ipairs(request.cookies) do
+                cmd:cookie(value)
+            end
+
             cmd:version(request.version)
             cmd:body(request.body)
             cmd:method(request.method)
@@ -203,9 +212,14 @@ M.sendRequestFromCurrentBuffer = function()
         cmd:header(value)
     end
 
+    for _, value in ipairs(request.cookies) do
+        cmd:cookie(cookie)
+    end
+
     cmd:version(request.version)
     cmd:body(request.body)
     cmd:method(request.method)
+
 
     cmd:run(show_response)
 end

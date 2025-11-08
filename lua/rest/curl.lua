@@ -70,10 +70,20 @@ function CommandBuilder:version(version)
     end
 
     table.insert(self._cmd, version_flag)
+    return self
+end
+
+---@param cookie string
+---@return rest.curl.CommandBuilder
+function CommandBuilder:cookie(cookie)
+    local cookie_command = '--cookie "' .. cookie .. '"'
+    table.insert(self._cmd, cookie_command)
+    return self
 end
 
 ---@param on_exit function: function to run when the command finishes
 function CommandBuilder:run(on_exit)
+    print(self._cmd)
     local _, err = pcall(function() vim.system(self._cmd, { text = true }, on_exit):wait(5000) end)
 
     if err then
